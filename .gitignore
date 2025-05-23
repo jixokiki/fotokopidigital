@@ -1,0 +1,8 @@
+# Folder dan file yang sebaiknya diabaikan Git
+node_modules/
+dist/
+.env
+.DS_Store
+*.log
+.cache/
+.local-chromium/
