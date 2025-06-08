@@ -5,7 +5,7 @@
         "mpdf/mpdf": "^8.2"
     },
      "scripts": {
-    "start": "php -S 0.0.0.0:8080"
+    "start": "php -S 0.0.0.0:8000"
   }
 }
 
