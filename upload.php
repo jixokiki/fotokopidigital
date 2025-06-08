@@ -17,17 +17,39 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   $file = $_FILES['file'];
   $target_dir = "uploads/";
   $target_file = $target_dir . basename($file['name']);
-  move_uploaded_file($file['tmp_name'], $target_file);
+  // move_uploaded_file($file['tmp_name'], $target_file);
 
-  // Simpan ke tabel users
-  $conn->query("INSERT INTO users (name, email, phone, address) VALUES ('$name', '$email', '$phone', '$address')");
-  $user_id = $conn->insert_id;
+  // // Simpan ke tabel users
+  // $conn->query("INSERT INTO users (name, email, phone, address) VALUES ('$name', '$email', '$phone', '$address')");
+  // $user_id = $conn->insert_id;
 
-  // Simpan ke tabel orders
-  $stmt = $conn->prepare("INSERT INTO orders (user_id, file_name, file_path, print_type, paper_size, binding, delivery, payment_method, total_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-  $stmt->bind_param("isssssisd", $user_id, $file['name'], $target_file, $print_type, $paper_size, $binding, $delivery, $payment_method, $total_price);
-  $stmt->execute();
+  // // Simpan ke tabel orders
+  // $stmt = $conn->prepare("INSERT INTO orders (user_id, file_name, file_path, print_type, paper_size, binding, delivery, payment_method, total_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+  // $stmt->bind_param("isssssisd", $user_id, $file['name'], $target_file, $print_type, $paper_size, $binding, $delivery, $payment_method, $total_price);
+  // $stmt->execute();
 
-  echo "<script>alert('Pesanan berhasil dikirim!'); window.location='index.php';</script>";
+  // echo "<script>alert('Pesanan berhasil dikirim!'); window.location='index.php';</script>";
+  if (move_uploaded_file($file['tmp_name'], $target_file)) {
+    // Simpan ke tabel users
+    $conn->query("INSERT INTO users (name, email, phone, address) VALUES ('$name', '$email', '$phone', '$address')");
+    $user_id = $conn->insert_id;
+
+    // Simpan ke tabel orders
+    $stmt = $conn->prepare("INSERT INTO orders (user_id, file_name, file_path, print_type, paper_size, binding, delivery, payment_method, total_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("isssssisd", $user_id, $file['name'], $target_file, $print_type, $paper_size, $binding, $delivery, $payment_method, $total_price);
+    $stmt->execute();
+
+    echo "<script>
+      const audio = new Audio('https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3');
+      audio.play();
+      setTimeout(() => {
+        window.location.href = 'form.php?success=1';
+      }, 500);
+    </script>";
+    header("Location: form.php?success=1");
+    exit;
+  } else {
+    echo "<script>alert('Gagal mengunggah file.'); window.location='form.php';</script>";
+  }
 }
 ?>
